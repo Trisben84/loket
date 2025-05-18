@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Aplikasi Loket Pertanahan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f2f2f2;
+    }
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    main {
+      padding: 20px;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      margin: auto;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+    .data-list {
+      margin-top: 40px;
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .permohonan {
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sistem Aplikasi Loket Pertanahan</h1>
+  </header>
+  <main>
+    <form id="formPermohonan">
+      <h2>Formulir Permohonan</h2>
+      <label for="nama">Nama Lengkap:</label>
+      <input type="text" id="nama" name="nama" required>
+
+      <label for="layanan">Jenis Layanan:</label>
+      <select id="layanan" name="layanan" required>
+        <option value="">-- Pilih Layanan --</option>
+        <option value="Pendaftaran Tanah">Pendaftaran Tanah</option>
+        <option value="Sertifikat Hak Milik">Sertifikat Hak Milik</option>
+        <option value="Pengecekan Sertifikat">Pengecekan Sertifikat</option>
+      </select>
+
+      <label for="dokumen">Dokumen (PDF):</label>
+      <input type="file" id="dokumen" name="dokumen" accept="application/pdf" required>
+
+      <button type="submit">Kirim Permohonan</button>
+    </form>
+
+    <div class="data-list" id="daftarPermohonan">
+      <h2>Daftar Permohonan</h2>
+      <div id="listData"></div>
+    </div>
+  </main>
+
+  <script>
+    const form = document.getElementById('formPermohonan');
+    const listData = document.getElementById('listData');
+
+    function simpanData(data) {
+      const daftar = JSON.parse(localStorage.getItem('permohonan')) || [];
+      daftar.push(data);
+      localStorage.setItem('permohonan', JSON.stringify(daftar));
+    }
+
+    function tampilkanData() {
+      const daftar = JSON.parse(localStorage.getItem('permohonan')) || [];
+      listData.innerHTML = '';
+      daftar.forEach((item, index) => {
+        listData.innerHTML += `
+          <div class="permohonan">
+            <strong>${item.nama}</strong><br>
+            Layanan: ${item.layanan}<br>
+            Dokumen: ${item.dokumen}<br>
+          </div>
+        `;
+      });
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const nama = form.nama.value;
+      const layanan = form.layanan.value;
+      const dokumen = form.dokumen.files[0]?.name || 'Tidak ada';
+
+      const data = { nama, layanan, dokumen };
+      simpanData(data);
+      tampilkanData();
+      form.reset();
+    });
+
+    document.addEventListener('DOMContentLoaded', tampilkanData);
+  </script>
+</body>
+</html>
